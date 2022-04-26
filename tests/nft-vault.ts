@@ -2,7 +2,7 @@ import * as anchor from "@project-serum/anchor";
 import { Program } from "@project-serum/anchor";
 import { NftVault } from "../target/types/nft_vault";
 import { Transaction } from "@solana/web3.js";
-import { addSols, getNftVaultPda } from "./utils";
+import { addSols, getNftVaultPda, mintNFT } from "./utils";
 
 describe("nft-vault", () => {
   // Configure the client to use the local cluster.
@@ -16,7 +16,12 @@ describe("nft-vault", () => {
     await addSols(program.provider, fakeAuthority.publicKey);
     await addSols(program.provider, staker.publicKey);
 
-    //await mintNFT(program.provider, staker, staker, staker);
+    const { payerAta, tokenMint } = await mintNFT(
+      program.provider,
+      staker,
+      staker,
+      staker
+    );
   });
 
   it("Is initialized!", async () => {
