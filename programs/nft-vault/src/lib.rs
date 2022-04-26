@@ -25,7 +25,7 @@ pub mod nft_vault {
             ctx.accounts.token_program.to_account_info(),
             token::Transfer {
                 authority: ctx.accounts.staker.to_account_info(),
-                from: ctx.accounts.user_ata.to_account_info(),
+                from: ctx.accounts.staker_ata.to_account_info(),
                 to: ctx.accounts.nft_vault_ata.to_account_info(),
             },
         );
@@ -33,7 +33,39 @@ pub mod nft_vault {
         Ok(())
     }
 
-    // only authority could release
+    // user unstake 
+    pub fn unstake(ctx: Context<Unstake>) -> Result<()> {
+        require_keys_eq!(
+            ctx.accounts.token_mint.key(),
+            ctx.accounts.stake_nft.mint,
+            NftError::MintMismatch
+        );
+
+        require_keys_eq!(
+            ctx.accounts.stake_nft.staker,
+            ctx.accounts.staker.key(),
+            NftError::KeyMismatch
+        );
+
+        let nft_vault_bump = ctx.accounts.nft_vault.bump;
+        let seeds = &[b"nft-vault".as_ref(), &[nft_vault_bump]];
+        let signer =  &[&seeds[..]];
+
+        let token_ctx = CpiContext::new_with_signer(
+            ctx.accounts.token_program.to_account_info(),
+            token::Transfer {
+                authority: ctx.accounts.nft_vault.to_account_info(),
+                from: ctx.accounts.nft_vault_ata.to_account_info(),
+                to: ctx.accounts.staker_ata.to_account_info(),
+            },
+            signer,
+        );
+        token::transfer(token_ctx, 1)?;
+
+        Ok(())
+    }
+
+    // authority could release to user
     pub fn release(ctx: Context<Release>) -> Result<()> {
         require_keys_eq!(
             ctx.accounts.nft_vault.authority,
@@ -60,7 +92,7 @@ pub mod nft_vault {
         let token_ctx = CpiContext::new_with_signer(
             ctx.accounts.token_program.to_account_info(),
             token::Transfer {
-                authority: ctx.accounts.staker.to_account_info(),
+                authority: ctx.accounts.nft_vault.to_account_info(),
                 from: ctx.accounts.nft_vault_ata.to_account_info(),
                 to: ctx.accounts.staker_ata.to_account_info(),
             },
@@ -122,11 +154,56 @@ pub struct Stake<'info> {
 
     pub token_mint: Account<'info, Mint>,
     #[account(mut)]
-    pub user_ata: Account<'info, TokenAccount>,
+    pub staker_ata: Account<'info, TokenAccount>,
 
     #[account(
         init,
         payer = staker,
+        associated_token::mint = token_mint,
+        associated_token::authority = nft_vault,
+    )]
+    pub nft_vault_ata: Account<'info, TokenAccount>,
+    pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token>,
+    pub associated_token_program: Program<'info, AssociatedToken>,
+    pub rent: Sysvar<'info, Rent>,
+}
+
+
+#[derive(Accounts)]
+pub struct Unstake<'info> {
+    #[account(mut)]
+    pub staker: Signer<'info>,
+
+    #[account(
+        seeds = [
+            b"user-stake".as_ref(),
+            token_mint.key().as_ref(),
+            staker.key().as_ref()
+        ],
+        bump = stake_nft.bump
+    )]
+    pub stake_nft: Account<'info, StakeNft>,
+
+    #[account(
+        seeds = [
+            b"nft-vault".as_ref()
+        ],
+        bump = nft_vault.bump
+    )]
+    pub nft_vault: Account<'info, NftVault>,
+
+    pub token_mint: Account<'info, Mint>,
+    #[account(
+        init_if_needed,
+        payer = staker,
+        associated_token::mint = token_mint,
+        associated_token::authority = staker,
+    )]
+    pub staker_ata: Account<'info, TokenAccount>,
+
+    #[account(
+        mut,
         associated_token::mint = token_mint,
         associated_token::authority = nft_vault,
     )]

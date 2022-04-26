@@ -47,7 +47,63 @@ export type NftVault = {
           "isSigner": false
         },
         {
-          "name": "userAta",
+          "name": "stakerAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftVaultAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "unstake",
+      "accounts": [
+        {
+          "name": "staker",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "stakeNft",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "nftVault",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "stakerAta",
           "isMut": true,
           "isSigner": false
         },
@@ -256,7 +312,63 @@ export const IDL: NftVault = {
           "isSigner": false
         },
         {
-          "name": "userAta",
+          "name": "stakerAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftVaultAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "unstake",
+      "accounts": [
+        {
+          "name": "staker",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "stakeNft",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "nftVault",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "stakerAta",
           "isMut": true,
           "isSigner": false
         },
