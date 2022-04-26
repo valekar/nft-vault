@@ -89,7 +89,7 @@ export type NftVault = {
         },
         {
           "name": "stakeNft",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -150,7 +150,7 @@ export type NftVault = {
         },
         {
           "name": "stakeNft",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -354,7 +354,7 @@ export const IDL: NftVault = {
         },
         {
           "name": "stakeNft",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -415,7 +415,7 @@ export const IDL: NftVault = {
         },
         {
           "name": "stakeNft",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {

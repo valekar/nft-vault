@@ -2,13 +2,15 @@ import * as anchor from "@project-serum/anchor";
 import { Program } from "@project-serum/anchor";
 import { NftVault } from "../target/types/nft_vault";
 import {
-  createAccount,
+  AccountLayout,
   createAssociatedTokenAccountInstruction,
   createInitializeMintInstruction,
   createMintToInstruction,
   MintLayout,
 } from "@solana/spl-token";
 import { PublicKey, Transaction, Keypair, Signer } from "@solana/web3.js";
+
+import NftVaultIdl from "../target/idl/nft_vault.json";
 
 /** Address of the SPL Token program */
 export const TOKEN_PROGRAM_ID = new PublicKey(
@@ -23,7 +25,7 @@ export const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey(
 export const addSols = async (
   provider: anchor.Provider,
   wallet: anchor.web3.PublicKey,
-  amount = 2 * anchor.web3.LAMPORTS_PER_SOL
+  amount = 3 * anchor.web3.LAMPORTS_PER_SOL
 ) => {
   await provider.connection.confirmTransaction(
     await provider.connection.requestAirdrop(wallet, amount),
@@ -31,10 +33,23 @@ export const addSols = async (
   );
 };
 
-export const getNftVaultPda = async (program: Program<NftVault>) => {
+export const getNftVaultPda = async (
+  programId: PublicKey = new PublicKey(NftVaultIdl.metadata.address)
+) => {
   return await anchor.web3.PublicKey.findProgramAddress(
     [Buffer.from("nft-vault")],
-    program.programId
+    programId
+  );
+};
+
+export const getStakeNftPda = async (
+  stakerKey: PublicKey,
+  tokenMint: PublicKey,
+  programId: PublicKey = new PublicKey(NftVaultIdl.metadata.address)
+) => {
+  return await anchor.web3.PublicKey.findProgramAddress(
+    [Buffer.from("user-stake"), tokenMint.toBuffer(), stakerKey.toBuffer()],
+    programId
   );
 };
 
@@ -100,7 +115,10 @@ export const mintNFT = async (
     []
   );
 
-  const txWithSigners: { tx: Transaction; signers?: Signer[] }[] = [];
+  const txWithSigners: Array<{
+    tx: Transaction;
+    signers: Array<Signer | undefined>;
+  }> = [];
 
   const transaction1 = new Transaction();
   transaction1.add(createMintAccountInstruction);
@@ -113,10 +131,21 @@ export const mintNFT = async (
     signers: [payer, tokenMintKeypair], // first has to be payer because this account is used for deduction payment in any transaction
   });
 
-  await provider.sendAll(txWithSigners);
+  await provider.sendAll!(txWithSigners);
 
   return {
     payerAta: payerAta,
     tokenMint: tokenMintKeypair.publicKey,
   };
+};
+
+export const getRawTokenAccount = async (
+  provider: anchor.Provider,
+  address: PublicKey
+) => {
+  const account = await provider.connection.getAccountInfo(address);
+  if (account == null) {
+    return null;
+  }
+  return AccountLayout.decode(account.data);
 };

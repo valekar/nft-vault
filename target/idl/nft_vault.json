@@ -89,7 +89,7 @@
         },
         {
           "name": "stakeNft",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -150,7 +150,7 @@
         },
         {
           "name": "stakeNft",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {

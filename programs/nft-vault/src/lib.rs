@@ -132,7 +132,7 @@ pub struct Stake<'info> {
     pub staker: Signer<'info>,
 
     #[account(
-        init,
+        init, 
         space = 8 + StakeNft::LEN,
         payer = staker,
         seeds = [
@@ -157,7 +157,7 @@ pub struct Stake<'info> {
     pub staker_ata: Account<'info, TokenAccount>,
 
     #[account(
-        init,
+        init_if_needed,
         payer = staker,
         associated_token::mint = token_mint,
         associated_token::authority = nft_vault,
@@ -176,12 +176,14 @@ pub struct Unstake<'info> {
     pub staker: Signer<'info>,
 
     #[account(
+        mut,
         seeds = [
             b"user-stake".as_ref(),
             token_mint.key().as_ref(),
             staker.key().as_ref()
         ],
-        bump = stake_nft.bump
+        bump = stake_nft.bump,
+        close = staker
     )]
     pub stake_nft: Account<'info, StakeNft>,
 
@@ -228,12 +230,14 @@ pub struct Release<'info> {
     pub nft_vault: Account<'info, NftVault>,
 
     #[account(
+        mut,
         seeds = [
             b"user-stake".as_ref(),
             token_mint.key().as_ref(),
             staker.key().as_ref()
         ],
-        bump = stake_nft.bump
+        bump = stake_nft.bump,
+        close = authority
     )]
     pub stake_nft: Account<'info, StakeNft>,
 
