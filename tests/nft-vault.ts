@@ -10,9 +10,13 @@ describe("nft-vault", () => {
 
   const program = anchor.workspace.NftVault as Program<NftVault>;
   const fakeAuthority = anchor.web3.Keypair.generate();
+  const staker = anchor.web3.Keypair.generate();
 
   before("before call", async () => {
     await addSols(program.provider, fakeAuthority.publicKey);
+    await addSols(program.provider, staker.publicKey);
+
+    //await mintNFT(program.provider, staker, staker, staker);
   });
 
   it("Is initialized!", async () => {
