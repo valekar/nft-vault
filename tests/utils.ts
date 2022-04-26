@@ -115,10 +115,10 @@ export const mintNFT = async (
     []
   );
 
-  const txWithSigners: Array<{
+  const txWithSigners: {
     tx: Transaction;
-    signers: Array<Signer | undefined>;
-  }> = [];
+    signers?: Signer[];
+  }[] = [];
 
   const transaction1 = new Transaction();
   transaction1.add(createMintAccountInstruction);
