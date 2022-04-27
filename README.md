@@ -136,6 +136,10 @@ This repo has 4 basic functionalities
    console.log("Your transaction signature", tx);
    ```
 
+### More Details
+
+For more details on interacting from client refer [tests](https://github.com/valekar/nft-vault/tree/feature/add-readme/tests) folder
+
 ## Further Improvements
 
 There are a few more things that could be achieved with this program
