@@ -132,7 +132,9 @@ This repo has 4 basic functionalities
    const transaction = new Transaction();
    transaction.add(releaseInstruction);
 
-   const tx = await program.provider.sendAndConfirm!(transaction, [authority]);
+   const tx = await program.provider.sendAndConfirm!(transaction, [
+     fakeAuthority,
+   ]);
    console.log("Your transaction signature", tx);
    ```
 
