@@ -156,4 +156,4 @@ Feel free to open issues or create PRs if you want to contribute
 
 ## License
 
-MIT
+[MIT](https://github.com/valekar/nft-vault/blob/feature/add-readme/LICENSE)
